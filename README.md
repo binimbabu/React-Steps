@@ -285,3 +285,109 @@ Practical guidelines about state
 State variable should track any data that component has over time. For this in Vanilla JavaScript we use let, var, [], {}
 When the component need to be dynamic , create a state and update the state say in the event handler function.
 Dont use state variables everytime for also creating a simple variable because state updates will re-render the UI which leads to performance issues.
+
+
+
+
+
+Child Props
+
+
+Motivation for the Children Prop
+With so many props, adding more for customization becomes unwieldy. Instead, we can use the children prop. Rather than passing in the emoji and text as separate props, we can pass the content directly between the opening and closing tags of the Button component.
+
+<Button>
+  <span>👈</span> Previous
+</Button>
+<Button>
+  Next <span>👉</span>
+</Button>
+
+This approach allows us to easily change the position of the emoji or add more elements as needed. The Button component can now receive any content as children.
+' <span>👈</span> Previous' is passed as child props to Button component. Similarly  'Next <span>👉</span>' wen placing between Button component
+
+Using the Children Prop in the Button Component
+To access the content between the opening and closing tags, the Button component uses the children prop. This is a predefined keyword in React, and its value is whatever is placed between the tags.
+
+function Button({ children, bgColor, textColor, onClick }) {
+  return (
+    <button style={{ backgroundColor: bgColor, color: textColor }} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
+the 'children' is the value passed to Button function which was placed in 'Step' function between the Button tag (<Button><span>👈</span> Previous
+</Button>)
+
+The children prop is a very important tool in React. It allows us to make our components truly reusable, as we can pass any content into the component without it needing to know what that content is.
+
+The Button component simply takes the children and renders them inside the button. We can think of the children prop as a hole that can be filled with any content we choose
+
+example
+
+
+export default function App() {
+  return (
+    <div>
+      <Steps />
+      {/* <Steps /> */}
+    </div>
+  );
+}
+
+function Button({ textColor, bgColor, onClick, children }) {
+  return (
+    <button
+      style={{ backgroundColor: bgColor, color: textColor }}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+
+function Steps() {
+  let [step, setStep] = useState(1);
+  let [isOpen, setOpen] = useState(true);
+  //let [test, setTest] = useState({ name: "Bini" });
+  function handlePrevious() {
+    if (step > 1) setStep((st) => st - 1);
+  }
+  function handleNext() {
+    if (step < 3) setStep((st) => st + 1);
+    // setTest({ name: "Babu" });
+  }
+  function close() {
+    setOpen((isOpenVal) => !isOpenVal);
+  }
+  return (
+    <div>
+      <button className="close" onClick={close}>
+        &times;
+      </button>
+      {isOpen && (
+        <div className="steps">
+          <div className="numbers">
+            <div className={`${step >= 1 ? "active" : ""}`}>1</div>
+            <div className={`${step >= 2 ? "active" : ""}`}>2</div>
+            <div className={`${step >= 3 ? "active" : ""}`}>3</div>
+          </div>
+          <p className="message">
+            Step {step} : {messages[step - 1]}
+          </p>
+          <div className="buttons">
+                        <Button bgColor="#7950f2" textColor="#fff" onClick={handlePrevious}>
+              <span>👈</span>Previous
+            </Button>
+            <Button bgColor="#7950f2" textColor="#fff" onClick={handleNext}>
+              Next<span>👉</span>
+            </Button>
+          
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
